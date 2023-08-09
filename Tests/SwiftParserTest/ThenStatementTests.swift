@@ -790,8 +790,21 @@ final class ThenStatementTests: ParserTestCase {
     // Make sure it's disabled by default. This is specifically testing
     // StmtSyntax.parse, since it will try to parse without checking
     // `atStartOfThenStatement`.
-    var parser = Parser("then 0")
-    let invalid = StmtSyntax.parse(from: &parser)
-    XCTAssert(invalid.hasError)
+    assertParse(
+      """
+      1️⃣then 02️⃣
+      """,
+      { StmtSyntax.parse(from: &$0) },
+      diagnostics: [
+        DiagnosticSpec(
+          locationMarker: "1️⃣", message: "unexpected code 'then 0' before statement"
+        ),
+        DiagnosticSpec(
+          locationMarker: "2️⃣", message: "expected statement",
+          fixIts: ["insert statement"]
+        ),
+      ],
+      fixedSource: "<#statement#>then 0"
+    )
   }
 }

@@ -623,8 +623,9 @@ public let STMT_NODES: [Node] = [
     nameForDiagnostics: "'then' statement",
     documentation: """
       A statement used to indicate the produced value from an if/switch
-      expression. Written as:
+      expression.
 
+       Written as:
       ```swift
       then <expr>
       ```

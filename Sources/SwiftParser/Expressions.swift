@@ -24,7 +24,7 @@ extension TokenConsumer {
       if backtrack.at(anyIn: IfOrSwitch.self) != nil {
         return true
       }
-      // Note we current pass `preferExpr: false` to prefer diagnosing `try then`
+      // Note we currently pass `preferExpr: false` to prefer diagnosing `try then`
       // as needing to be `then try`, rather than parsing `then` as an expression.
       if backtrack.atStartOfDeclaration() || backtrack.atStartOfStatement(preferExpr: false) {
         // If after the 'try' we are at a declaration or statement, it can't be a valid expression.
