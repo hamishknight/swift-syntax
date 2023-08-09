@@ -212,7 +212,7 @@ enum TokenPrecedence: Comparable {
       // Secondary parts of control-flow constructs
       .case, .catch, .default, .else,
       // Return-like statements
-      .break, .continue, .fallthrough, .return, .throw, .yield:
+      .break, .continue, .fallthrough, .return, .throw, .then, .yield:
       self = .stmtKeyword
     // MARK: Decl keywords
     case  // Types

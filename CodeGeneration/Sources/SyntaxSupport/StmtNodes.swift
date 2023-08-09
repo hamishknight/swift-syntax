@@ -615,4 +615,29 @@ public let STMT_NODES: [Node] = [
     ]
   ),
 
+  // then-stmt -> 'then' expr ';'?
+  Node(
+    kind: .thenStmt,
+    base: .stmt,
+    isExperimental: true,
+    nameForDiagnostics: "'then' statement",
+    documentation: """
+      A statement used to indicate the produced value from an if/switch
+      expression. Written as:
+
+      ```swift
+      then <expr>
+      ```
+      """,
+    children: [
+      Child(
+        name: "ThenKeyword",
+        kind: .token(choices: [.keyword(text: "then")])
+      ),
+      Child(
+        name: "Expression",
+        kind: .node(kind: .expr)
+      ),
+    ]
+  ),
 ]

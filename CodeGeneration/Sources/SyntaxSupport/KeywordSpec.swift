@@ -235,6 +235,7 @@ public let KEYWORDS: [KeywordSpec] = [
   KeywordSpec("swift"),
   KeywordSpec("switch", isLexerClassified: true, requiresTrailingSpace: true),
   KeywordSpec("target"),
+  KeywordSpec("then", isExperimental: true),
   KeywordSpec("throw", isLexerClassified: true, requiresTrailingSpace: true),
   KeywordSpec("throws", isLexerClassified: true, requiresTrailingSpace: true),
   KeywordSpec("transpose"),
