@@ -1774,6 +1774,14 @@ open class SyntaxRewriter {
     return ExprSyntax(visitChildren(node))
   }
   
+  /// Visit a ``ThenStmtSyntax``.
+  ///   - Parameter node: the node that is being visited
+  ///   - Returns: the rewritten node
+  @_spi(ExperimentalLanguageFeatures)
+  open func visit(_ node: ThenStmtSyntax) -> StmtSyntax {
+    return StmtSyntax(visitChildren(node))
+  }
+  
   /// Visit a ``ThrowStmtSyntax``.
   ///   - Parameter node: the node that is being visited
   ///   - Returns: the rewritten node
@@ -5422,6 +5430,20 @@ open class SyntaxRewriter {
   }
   
   /// Implementation detail of visit(_:). Do not call directly.
+  private func visitImplThenStmtSyntax(_ data: SyntaxData) -> Syntax {
+    let node = ThenStmtSyntax(data)
+    // Accessing _syntaxNode directly is faster than calling Syntax(node)
+    visitPre(node._syntaxNode)
+    defer {
+      visitPost(node._syntaxNode)
+    }
+    if let newNode = visitAny(node._syntaxNode) {
+      return newNode
+    }
+    return Syntax(visit(node))
+  }
+  
+  /// Implementation detail of visit(_:). Do not call directly.
   private func visitImplThrowStmtSyntax(_ data: SyntaxData) -> Syntax {
     let node = ThrowStmtSyntax(data)
     // Accessing _syntaxNode directly is faster than calling Syntax(node)
@@ -6395,6 +6417,8 @@ open class SyntaxRewriter {
       return visitImplSwitchExprSyntax
     case .ternaryExpr:
       return visitImplTernaryExprSyntax
+    case .thenStmt:
+      return visitImplThenStmtSyntax
     case .throwStmt:
       return visitImplThrowStmtSyntax
     case .tryExpr:
@@ -6953,6 +6977,8 @@ open class SyntaxRewriter {
       return visitImplSwitchExprSyntax(data)
     case .ternaryExpr:
       return visitImplTernaryExprSyntax(data)
+    case .thenStmt:
+      return visitImplThenStmtSyntax(data)
     case .throwStmt:
       return visitImplThrowStmtSyntax(data)
     case .tryExpr:

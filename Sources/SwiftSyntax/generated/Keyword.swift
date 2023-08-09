@@ -196,6 +196,8 @@ public enum Keyword: UInt8, Hashable {
   case swift
   case `switch`
   case target
+  @_spi(ExperimentalLanguageFeatures)
+  case then
   case `throw`
   case `throws`
   case transpose
@@ -307,6 +309,8 @@ public enum Keyword: UInt8, Hashable {
         self = .`Self`
       case "some":
         self = .some
+      case "then":
+        self = .then
       case "true":
         self = .`true`
       case "Type":
@@ -945,6 +949,7 @@ public enum Keyword: UInt8, Hashable {
       "swift", 
       "switch", 
       "target", 
+      "then", 
       "throw", 
       "throws", 
       "transpose", 

@@ -1989,6 +1989,16 @@ open class SyntaxAnyVisitor: SyntaxVisitor {
     visitAnyPost(node._syntaxNode)
   }
   
+  @_spi(ExperimentalLanguageFeatures)
+  override open func visit(_ node: ThenStmtSyntax) -> SyntaxVisitorContinueKind {
+    return visitAny(node._syntaxNode)
+  }
+  
+  @_spi(ExperimentalLanguageFeatures)
+  override open func visitPost(_ node: ThenStmtSyntax) {
+    visitAnyPost(node._syntaxNode)
+  }
+  
   override open func visit(_ node: ThrowStmtSyntax) -> SyntaxVisitorContinueKind {
     return visitAny(node._syntaxNode)
   }

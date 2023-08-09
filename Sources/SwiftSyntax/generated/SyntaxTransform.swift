@@ -3090,6 +3090,14 @@ extension SyntaxTransformVisitor {
     visitAny(Syntax(node))
   }
   
+  /// Visiting ``ThenStmtSyntax`` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: nil by default.
+  @_spi(ExperimentalLanguageFeatures)
+  public func visit(_ node: ThenStmtSyntax) -> ResultType {
+    visitAny(Syntax(node))
+  }
+  
   /// Visiting ``ThrowStmtSyntax`` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: nil by default.
@@ -3801,6 +3809,8 @@ extension SyntaxTransformVisitor {
     case .switchExpr(let derived):
       return visit(derived)
     case .ternaryExpr(let derived):
+      return visit(derived)
+    case .thenStmt(let derived):
       return visit(derived)
     case .throwStmt(let derived):
       return visit(derived)
