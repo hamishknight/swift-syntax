@@ -1989,6 +1989,16 @@ extension SyntaxTransformVisitor {
     visitAny(Syntax(node))
   }
   
+  /// Visiting ``DoExprSyntax`` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: nil by default.
+  #if compiler(>=5.8)
+  @_spi(ExperimentalLanguageFeatures)
+  #endif
+  public func visit(_ node: DoExprSyntax) -> ResultType {
+    visitAny(Syntax(node))
+  }
+  
   /// Visiting ``DoStmtSyntax`` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: nil by default.
@@ -3507,6 +3517,8 @@ extension SyntaxTransformVisitor {
     case .discardAssignmentExpr(let derived):
       return visit(derived)
     case .discardStmt(let derived):
+      return visit(derived)
+    case .doExpr(let derived):
       return visit(derived)
     case .doStmt(let derived):
       return visit(derived)

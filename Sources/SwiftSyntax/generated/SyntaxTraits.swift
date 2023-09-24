@@ -687,6 +687,8 @@ extension DictionaryElementSyntax: WithTrailingCommaSyntax {}
 
 extension DifferentiabilityArgumentSyntax: WithTrailingCommaSyntax {}
 
+extension DoExprSyntax: WithCodeBlockSyntax {}
+
 extension DoStmtSyntax: WithCodeBlockSyntax {}
 
 extension DocumentationAttributeArgumentSyntax: WithTrailingCommaSyntax {}
