@@ -20,7 +20,7 @@ extension TokenConsumer {
       backtrack.eat(handle)
 
       // These can be parsed as expressions with try/await.
-      if backtrack.at(anyIn: IfOrSwitch.self) != nil {
+      if backtrack.at(anyIn: SingleValueStatementExpression.self) != nil {
         return true
       }
       // Note we currently pass `preferExpr: false` to prefer diagnosing `try then`
@@ -525,21 +525,26 @@ extension Parser {
     flavor: ExprFlavor,
     pattern: PatternContext = .none
   ) -> RawExprSyntax {
-    // First check to see if we have the start of a regex literal `/.../`.
-    //    tryLexRegexLiteral(/*forUnappliedOperator*/ false)
-
-    // Try parse an 'if' or 'switch' as an expression. Note we do this here in
-    // parseUnaryExpression as we don't allow postfix syntax to hang off such
-    // expressions to avoid ambiguities such as postfix '.member', which can
-    // currently be parsed as a static dot member for a result builder.
-    if self.at(.keyword(.switch)) {
+    // Try parse a single value statement as an expression (e.g do/if/switch).
+    // Note we do this here in parseUnaryExpression as we don't allow postfix
+    // syntax to hang off such expressions to avoid ambiguities such as postfix
+    // '.member', which can currently be parsed as a static dot member for a
+    // result builder.
+    switch self.at(anyIn: SingleValueStatementExpression.self) {
+    case (.do, _)?:
       return RawExprSyntax(
-        parseSwitchExpression(switchHandle: .constant(.keyword(.switch)))
+        self.parseDoExpression(doHandle: .constant(.keyword(.do)))
       )
-    } else if self.at(.keyword(.if)) {
+    case (.if, _)?:
       return RawExprSyntax(
-        parseIfExpression(ifHandle: .constant(.keyword(.if)))
+        self.parseIfExpression(ifHandle: .constant(.keyword(.if)))
       )
+    case (.switch, _)?:
+      return RawExprSyntax(
+        self.parseSwitchExpression(switchHandle: .constant(.keyword(.switch)))
+      )
+    default:
+      break
     }
 
     switch self.at(anyIn: ExpressionPrefixOperator.self) {
@@ -2043,6 +2048,33 @@ extension Parser.Lookahead {
     default:
       return false
     }
+  }
+}
+
+// MARK: Do-Catch Expressions
+
+extension Parser {
+  /// Parse a do expression.
+  mutating func parseDoExpression(doHandle: RecoveryConsumptionHandle) -> RawDoExprSyntax {
+    assert(experimentalFeatures.contains(.doExpressions))
+    let (unexpectedBeforeDoKeyword, doKeyword) = self.eat(doHandle)
+    let body = self.parseCodeBlock(introducer: doKeyword)
+
+    // If the next token is 'catch', this is a 'do'/'catch'.
+    var elements = [RawCatchClauseSyntax]()
+    var loopProgress = LoopProgressCondition()
+    while self.at(.keyword(.catch)) && self.hasProgressed(&loopProgress) {
+      // Parse 'catch' clauses
+      elements.append(self.parseCatchClause())
+    }
+
+    return RawDoExprSyntax(
+      unexpectedBeforeDoKeyword,
+      doKeyword: doKeyword,
+      body: body,
+      catchClauses: RawCatchClauseListSyntax(elements: elements, arena: self.arena),
+      arena: self.arena
+    )
   }
 }
 
